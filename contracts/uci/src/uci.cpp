@@ -96,6 +96,69 @@ ACTION uci::nominate(name from, name to) {
 
 }
 
+//======================== election actions ========================
+
+ACTION uci::startelec(name ballot_name) {
+
+    //open config table, get config
+    config_table configs(get_self(), get_self().value);
+    auto conf = configs.get();
+
+    //open nominations table
+    nominations_table nominations(get_self(), get_self().value);
+    auto noms = nominations.get();
+
+    //initialize
+    asset decide_newballot_fee = asset(100000, TLOS_SYM); //10 TLOS
+    time_point_sec now = time_point_sec(current_time_point());
+    string ballot_title = "";
+    string ballot_description = "";
+    string ballot_content = "";
+    time_point_sec ballot_end_time = now + conf.election_interval; //80 days
+
+    //validate
+    check(conf.last_custodian_election + conf.election_interval < now, "too soon to start new election");
+
+    //send transfer inline to pay for newballot fee
+    action(permission_level{get_self(), name("active")}, name("eosio.token"), name("transfer"), make_tuple(
+        get_self(), //from
+        name("telos.decide"), //to
+        decide_newballot_fee, //quantity
+        string("Telos Works Ballot Fee Payment") //memo
+    )).send();
+
+    //send inline to draft new ballot on telos decide
+    action(permission_level{get_self(), name("active")}, name("telos.decide"), name("newballot"), make_tuple(
+        ballot_name, //ballot_name
+        name("election"), //category
+        get_self(), //publisher
+        conf.treasury_symbol, //treasury_symbol
+        name("1tokennvote"), //voting_method
+        noms.nominations_list //initial_options
+    )).send();
+
+    //send inline to edit details on ballot
+    action(permission_level{get_self(), name("active")}, name("telos.decide"), name("editdetails"), make_tuple(
+        ballot_name, //ballot_name
+        ballot_title, //title
+        ballot_description, //description
+        ballot_content //content
+    )).send();
+
+    //send inline to toggle ballot votestake setting (default is off)
+    action(permission_level{get_self(), name("active")}, name("telos.decide"), name("togglebal"), make_tuple(
+        ballot_name, //ballot_name
+        name("votestake") //setting_name
+    )).send();
+
+    //send inline to open voting on ballot
+    action(permission_level{get_self(), name("active")}, name("telos.decide"), name("openvoting"), make_tuple(
+        ballot_name, //ballot_name
+        ballot_end_time //end_time
+    )).send();
+
+}
+
 //======================== proposal actions ========================
 
 ACTION uci::submitprop(name proposer, string body, asset amount) {

@@ -160,6 +160,16 @@
             ]
         },
         {
+            "name": "startelec",
+            "base": "",
+            "fields": [
+                {
+                    "name": "ballot_name",
+                    "type": "name"
+                }
+            ]
+        },
+        {
             "name": "submitprop",
             "base": "",
             "fields": [
@@ -197,6 +207,11 @@
         {
             "name": "setversion",
             "type": "setversion",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "startelec",
+            "type": "startelec",
             "ricardian_contract": ""
         },
         {

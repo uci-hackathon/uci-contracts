@@ -6,7 +6,7 @@
 
 //TODO: verify UCI token precision
 //TODO: make UCI treasury public or private?
-//TODO: 
+//TODO: how long does an election vote last?
 
 #include <eosio/eosio.hpp>
 #include <eosio/singleton.hpp>
@@ -47,7 +47,7 @@ CONTRACT uci : public contract {
 
     //start a new election
     //auth: none
-    // ACTION startelec();
+    ACTION startelec(name ballot_name);
 
     //end election
     //auth: none
@@ -75,6 +75,7 @@ CONTRACT uci : public contract {
         asset self_nomination_thresh;
         time_point_sec last_custodian_election;
         uint32_t election_interval;
+        //name current_election_ballot;
         uint16_t max_custodians;
         uint16_t custodian_count;
         asset funding_proposal_thresh;
