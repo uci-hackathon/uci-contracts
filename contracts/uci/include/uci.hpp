@@ -4,9 +4,10 @@
 // @contract uci
 // @version v1.0.0
 
-//TODO: verify UCI token precision
-//TODO: make UCI treasury public or private?
-//TODO: how long does an election vote last?
+//TODO: get premium uci name
+//TODO: transferability - false, reclaim - true, burn - true
+//TODO: make UCI treasury public or private? public
+//TODO: how long does an election vote last?  8 days
 
 #include <eosio/eosio.hpp>
 #include <eosio/singleton.hpp>
@@ -24,7 +25,7 @@ CONTRACT uci : public contract {
 
     //constants
     const name UCI_ACCT = name("uci");
-    const symbol UCI_SYM = symbol("UCI", 2);
+    const symbol UCI_SYM = symbol("UCI", 0);
     const symbol TLOS_SYM = symbol("TLOS", 4);
 
     //======================== config actions ========================
@@ -63,6 +64,17 @@ CONTRACT uci : public contract {
     //auth: none
     ACTION endprop(uint64_t proposal_id);
 
+    //======================== metadata actions ========================
+
+    //update or insert account metadata
+    //auth: admin
+    ACTION upsertmeta(name account_name, string json);
+
+    //======================== notification handlers ========================
+
+    [[eosio::on_notify("telos.decide::broadcast")]]
+    void catch_broadcast(name ballot_name, map<name, asset> final_results, uint32_t total_voters);
+
     //======================== uci contract tables ========================
 
     //config table
@@ -74,8 +86,9 @@ CONTRACT uci : public contract {
         symbol treasury_symbol;
         asset self_nomination_thresh;
         time_point_sec last_custodian_election;
-        uint32_t election_interval;
-        //name current_election_ballot;
+        uint32_t election_interval; //80 days
+        uint32_t election_length; //8 days
+        name current_election_ballot;
         uint16_t max_custodians;
         uint16_t custodian_count;
         asset funding_proposal_thresh;
@@ -85,8 +98,9 @@ CONTRACT uci : public contract {
 
         EOSLIB_SERIALIZE(config, (contract_name)(contract_version)(admin)
         (treasury_symbol)(self_nomination_thresh)(last_custodian_election)
-        (election_interval)(max_custodians)(custodian_count)(funding_proposal_thresh)
-        (funding_proposal_length)(proposal_approve_percent)(last_proposal_id))
+        (election_interval)(election_length)(current_election_ballot)(max_custodians)
+        (custodian_count)(funding_proposal_thresh)(funding_proposal_length)
+        (proposal_approve_percent)(last_proposal_id))
     };
     typedef singleton<name("config"), config> config_table;
 
@@ -123,6 +137,17 @@ CONTRACT uci : public contract {
             (proposer)(amount_requested)(body))
     };
     typedef multi_index<name("proposals"), proposal> proposals_table;
+
+    //account metadata
+    //scope: uri
+    TABLE metadata {
+        name account_name;
+        string json;
+
+        uint64_t primary_key() const { return account_name.value; }
+        EOSLIB_SERIALIZE(metadata, (account_name)(json))
+    };
+    typedef multi_index<name("metadata"), metadata> meta_table;
 
     //======================== telos decide table defs ========================
 
