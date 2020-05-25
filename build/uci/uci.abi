@@ -36,6 +36,14 @@
                     "type": "uint32"
                 },
                 {
+                    "name": "election_length",
+                    "type": "uint32"
+                },
+                {
+                    "name": "current_election_ballot",
+                    "type": "name"
+                },
+                {
                     "name": "max_custodians",
                     "type": "uint16"
                 },
@@ -66,10 +74,15 @@
             "base": "",
             "fields": [
                 {
-                    "name": "custodian_name",
-                    "type": "name"
+                    "name": "custodians_list",
+                    "type": "name[]"
                 }
             ]
+        },
+        {
+            "name": "endelec",
+            "base": "",
+            "fields": []
         },
         {
             "name": "endprop",
@@ -96,6 +109,20 @@
                 {
                     "name": "initial_admin",
                     "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "metadata",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account_name",
+                    "type": "name"
+                },
+                {
+                    "name": "json",
+                    "type": "string"
                 }
             ]
         },
@@ -186,9 +213,28 @@
                     "type": "asset"
                 }
             ]
+        },
+        {
+            "name": "upsertmeta",
+            "base": "",
+            "fields": [
+                {
+                    "name": "account_name",
+                    "type": "name"
+                },
+                {
+                    "name": "json",
+                    "type": "string"
+                }
+            ]
         }
     ],
     "actions": [
+        {
+            "name": "endelec",
+            "type": "endelec",
+            "ricardian_contract": ""
+        },
         {
             "name": "endprop",
             "type": "endprop",
@@ -218,6 +264,11 @@
             "name": "submitprop",
             "type": "submitprop",
             "ricardian_contract": ""
+        },
+        {
+            "name": "upsertmeta",
+            "type": "upsertmeta",
+            "ricardian_contract": ""
         }
     ],
     "tables": [
@@ -229,8 +280,15 @@
             "key_types": []
         },
         {
-            "name": "custodians",
+            "name": "custodian",
             "type": "custodian",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "metadata",
+            "type": "metadata",
             "index_type": "i64",
             "key_names": [],
             "key_types": []
