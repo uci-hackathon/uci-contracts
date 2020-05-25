@@ -52,7 +52,7 @@ CONTRACT uci : public contract {
 
     //end election
     //auth: none
-    // ACTION endelec();
+    ACTION endelec();
 
     //======================== proposal actions ========================
 
@@ -116,12 +116,11 @@ CONTRACT uci : public contract {
     //custodians table
     //scope: uci
     TABLE custodian {
-        name custodian_name;
+        vector<name> custodians_list;
 
-        uint64_t primary_key() const { return custodian_name.value; }
-        EOSLIB_SERIALIZE(custodian, (custodian_name))
+        EOSLIB_SERIALIZE(custodian, (custodians_list))
     };
-    typedef multi_index<name("custodians"), custodian> custodians_table;
+    typedef singleton<name("custodians"), custodian> custodians_table;
 
     //proposals table
     //scope: uci
