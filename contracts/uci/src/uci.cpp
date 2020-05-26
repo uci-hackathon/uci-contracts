@@ -379,3 +379,15 @@ void uci::catch_broadcast(name ballot_name, map<name, asset> final_results, uint
     }
 
 }
+
+//======================== helper functions ========================
+
+asset uci::get_voter_balance(name account_name, symbol token_sym) {
+
+    //get voter from voters table on telos decide
+    voters_table voters(name("telos.decide"), account_name.value);
+    auto& vtr = voters.get(token_sym.code().raw(), "get_voter_balance: voter not found");
+
+    return vtr.liquid + vtr.staked;
+
+}

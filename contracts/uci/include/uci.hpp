@@ -1,13 +1,8 @@
 // UCI Contracts connecting to Telos Decide.
 //
-// @author Awesome Developer Person
+// @author Craig Branscom
 // @contract uci
 // @version v1.0.0
-
-//TODO: get premium uci name
-//TODO: transferability - false, reclaim - true, burn - true
-//TODO: make UCI treasury public or private? public
-//TODO: how long does an election vote last?  8 days
 
 #include <eosio/eosio.hpp>
 #include <eosio/singleton.hpp>
@@ -77,8 +72,8 @@ CONTRACT uci : public contract {
 
     //======================== helper functions ========================
 
-    //returns true if account is a UCI voter on Telos Decide
-    bool is_uci_voter(name account_name);
+    //returns total UCI balance of voter
+    asset get_voter_balance(name account_name, symbol token_sym);
 
     //======================== uci contract tables ========================
 
