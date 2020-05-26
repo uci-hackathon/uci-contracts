@@ -202,7 +202,7 @@ ACTION uci::submitprop(name proposer, string body, asset amount) {
     auto conf = configs.get();
 
     //get voter from voters table on telos decide
-    voters_table voters(get_self(), proposer.value);
+    voters_table voters(name("telos.decide"), proposer.value);
     auto& vtr = voters.get(conf.treasury_symbol.code().raw(), "voter not found");
 
     //validate
@@ -287,21 +287,31 @@ void uci::catch_broadcast(name ballot_name, map<name, asset> final_results, uint
         config_table configs(get_self(), get_self().value);
         auto conf = configs.get();
 
+        //initialize
+        map<name, asset> final_ballot_results = final_results;
+        vector<name> new_custodians_list;
+
         //if ballot is election ballot
         if (ballot_name == conf.current_election_ballot) {
 
             //initialize
-            vector<name> new_custodians_list;
             uint16_t elected_count = 0;
 
-            //TODO: sort results
+            //if less than or equal to 80 candidates in election
+            if (final_ballot_results.size() <= conf.max_custodians) {
 
-            //loop over results and build new custodians list
-            for (pair p : final_results) {
-                if (elected_count >= conf.max_custodians) {
-                    break;
+                //loop over results and build new custodians list
+                for (pair p : final_ballot_results) {
+                    if (elected_count >= conf.max_custodians) {
+                        break;
+                    }
+                    new_custodians_list.push_back(p.first);
                 }
-                new_custodians_list.push_back(p.first);
+
+            } else { //greater than 80 candidates
+
+                //TODO: sort results, select top 80
+
             }
 
             //open custodians table, get custodians

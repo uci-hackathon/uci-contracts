@@ -75,6 +75,11 @@ CONTRACT uci : public contract {
     [[eosio::on_notify("telos.decide::broadcast")]]
     void catch_broadcast(name ballot_name, map<name, asset> final_results, uint32_t total_voters);
 
+    //======================== helper functions ========================
+
+    //returns true if account is a UCI voter on Telos Decide
+    bool is_uci_voter(name account_name);
+
     //======================== uci contract tables ========================
 
     //config table
