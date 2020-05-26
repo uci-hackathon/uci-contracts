@@ -71,8 +71,21 @@ ACTION uci::setversion(string new_version) {
 
 ACTION uci::nominate(name from, name to) {
 
+    //open config table, get config
+    config_table configs(get_self(), get_self().value);
+    auto conf = configs.get();
+
     //authenticate
     require_auth(from);
+
+    //validate
+    check(is_uci_voter(from, UCI_SYM), "must be a UCI voter to nominate");
+    check(is_uci_voter(to, UCI_SYM), "nominee must be a uci voter");
+
+    //if self nominating
+    if (from == to) {
+        check(get_staked_balance(from, UCI_SYM) >= conf.self_nomination_thresh, "must meet self nomination threshold to self nominate");
+    }
 
     //open nominations table
     nominations_table nominations(get_self(), get_self().value);
@@ -199,7 +212,7 @@ ACTION uci::submitprop(name proposer, string body, asset amount) {
     auto& vtr = voters.get(conf.treasury_symbol.code().raw(), "voter not found");
 
     //validate
-    check(vtr.staked >= conf.funding_proposal_thresh, "must meet the stake threshold to submit proposal");
+    check(get_staked_balance(proposer, UCI_SYM) >= conf.funding_proposal_thresh, "must meet the minimum stake threshold to submit a proposal");
     check(amount.amount > 0, "requested amount must be positive");
 
     //initialize
@@ -290,6 +303,9 @@ ACTION uci::upsertmeta(name account_name, string json) {
 
     //authenticate
     require_auth(conf.admin);
+
+    //validate
+    check(is_uci_voter(account_name, UCI_SYM), "account name is not a uci voter");
 
     //open meta table, find meta
     meta_table meta(get_self(), get_self().value);
@@ -382,12 +398,37 @@ void uci::catch_broadcast(name ballot_name, map<name, asset> final_results, uint
 
 //======================== helper functions ========================
 
-asset uci::get_voter_balance(name account_name, symbol token_sym) {
+bool uci::is_uci_voter(name account_name, symbol token_sym) {
+
+    //open voters table, find voter
+    voters_table voters(name("telos.decide"), account_name.value);
+    auto vtr_itr = voters.find(token_sym.code().raw());
+
+    //if voter found
+    if (vtr_itr != voters.end()) {
+        return true;
+    } else { //not found
+        return false;
+    }
+
+}
+
+asset uci::get_liquid_balance(name account_name, symbol token_sym) {
 
     //get voter from voters table on telos decide
     voters_table voters(name("telos.decide"), account_name.value);
-    auto& vtr = voters.get(token_sym.code().raw(), "get_voter_balance: voter not found");
+    auto& vtr = voters.get(token_sym.code().raw(), "get_liquid_balance: voter not found");
 
-    return vtr.liquid + vtr.staked;
+    return vtr.liquid;
+
+}
+
+asset uci::get_staked_balance(name account_name, symbol token_sym) {
+
+    //get voter from voters table on telos decide
+    voters_table voters(name("telos.decide"), account_name.value);
+    auto& vtr = voters.get(token_sym.code().raw(), "get_staked_balance: voter not found");
+
+    return vtr.staked;
 
 }

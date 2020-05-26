@@ -72,8 +72,14 @@ CONTRACT uci : public contract {
 
     //======================== helper functions ========================
 
-    //returns total UCI balance of voter
-    asset get_voter_balance(name account_name, symbol token_sym);
+    //returns true if account is a UCI voter on Telos Decide
+    bool is_uci_voter(name account_name, symbol token_sym);
+
+    //returns liquid UCI balance of voter on Telos Decide
+    asset get_liquid_balance(name account_name, symbol token_sym);
+
+    //returns staked UCI balance of voter on Telos Decide
+    asset get_staked_balance(name account_name, symbol token_sym);
 
     //======================== uci contract tables ========================
 
