@@ -113,11 +113,6 @@
             ]
         },
         {
-            "name": "initcust",
-            "base": "",
-            "fields": []
-        },
-        {
             "name": "metadata",
             "base": "",
             "fields": [
@@ -178,6 +173,16 @@
                 {
                     "name": "body",
                     "type": "string"
+                }
+            ]
+        },
+        {
+            "name": "setinterval",
+            "base": "",
+            "fields": [
+                {
+                    "name": "new_interval_sec",
+                    "type": "uint32"
                 }
             ]
         },
@@ -251,13 +256,13 @@
             "ricardian_contract": ""
         },
         {
-            "name": "initcust",
-            "type": "initcust",
+            "name": "nominate",
+            "type": "nominate",
             "ricardian_contract": ""
         },
         {
-            "name": "nominate",
-            "type": "nominate",
+            "name": "setinterval",
+            "type": "setinterval",
             "ricardian_contract": ""
         },
         {

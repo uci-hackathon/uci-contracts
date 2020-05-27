@@ -23,8 +23,6 @@ CONTRACT uci : public contract {
     const symbol UCI_SYM = symbol("UCI", 0);
     const symbol TLOS_SYM = symbol("TLOS", 4);
 
-    ACTION initcust();
-
     //======================== config actions ========================
 
     //initialize the contract
@@ -34,6 +32,9 @@ CONTRACT uci : public contract {
     //set a new contract version
     //auth: admin
     ACTION setversion(string new_version);
+
+    //set new election interval
+    ACTION setinterval(uint32_t new_interval_sec);
 
     //======================== nomination actions ========================
 

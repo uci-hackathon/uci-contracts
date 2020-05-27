@@ -1,16 +1,5 @@
 #include "../include/uci.hpp"
 
-ACTION uci::initcust() {
-
-    custodians_table custodians(get_self(), get_self().value);
-    vector<name> initial_cust_list;
-    custodian initial_custs = {
-        initial_cust_list
-    };
-    custodians.set(initial_custs, get_self());
-
-}
-
 //======================== config actions ========================
 
 ACTION uci::init(string contract_name, string contract_version, name initial_admin) {
@@ -72,6 +61,26 @@ ACTION uci::setversion(string new_version) {
 
     //change contract version
     conf.contract_version = new_version;
+
+    //set new config
+    configs.set(conf, get_self());
+
+}
+
+ACTION uci::setinterval(uint32_t new_interval_sec) {
+
+    //open config table, get config
+    config_table configs(get_self(), get_self().value);
+    auto conf = configs.get();
+
+    //authenticate
+    require_auth(conf.admin);
+
+    //validate
+    check(new_interval_sec > 0, "new interval must be positive");
+
+    //change election interval
+    conf.election_interval = new_interval_sec;
 
     //set new config
     configs.set(conf, get_self());
