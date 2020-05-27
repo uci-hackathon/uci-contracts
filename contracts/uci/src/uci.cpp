@@ -302,7 +302,7 @@ ACTION uci::upsertmeta(name account_name, string json) {
     auto conf = configs.get();
 
     //authenticate
-    require_auth(conf.admin);
+    require_auth(account_name);
 
     //validate
     check(is_uci_voter(account_name, UCI_SYM), "account name is not a uci voter");
