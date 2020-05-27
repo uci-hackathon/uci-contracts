@@ -113,6 +113,11 @@
             ]
         },
         {
+            "name": "initcust",
+            "base": "",
+            "fields": []
+        },
+        {
             "name": "metadata",
             "base": "",
             "fields": [
@@ -243,6 +248,11 @@
         {
             "name": "init",
             "type": "init",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "initcust",
+            "type": "initcust",
             "ricardian_contract": ""
         },
         {

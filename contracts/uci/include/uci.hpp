@@ -23,6 +23,8 @@ CONTRACT uci : public contract {
     const symbol UCI_SYM = symbol("UCI", 0);
     const symbol TLOS_SYM = symbol("TLOS", 4);
 
+    ACTION initcust();
+
     //======================== config actions ========================
 
     //initialize the contract
@@ -117,7 +119,7 @@ CONTRACT uci : public contract {
 
         EOSLIB_SERIALIZE(nomination, (nominations_list))
     };
-    typedef singleton<name("nominations"), nomination> nominations_table;
+    typedef singleton<name("nomination"), nomination> nominations_table;
 
     //custodians table
     //scope: uci
@@ -126,7 +128,7 @@ CONTRACT uci : public contract {
 
         EOSLIB_SERIALIZE(custodian, (custodians_list))
     };
-    typedef singleton<name("custodians"), custodian> custodians_table;
+    typedef singleton<name("custodian"), custodian> custodians_table;
 
     //proposals table
     //scope: uci

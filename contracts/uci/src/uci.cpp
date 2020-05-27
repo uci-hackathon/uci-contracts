@@ -1,5 +1,16 @@
 #include "../include/uci.hpp"
 
+ACTION uci::initcust() {
+
+    custodians_table custodians(get_self(), get_self().value);
+    vector<name> initial_cust_list;
+    custodian initial_custs = {
+        initial_cust_list
+    };
+    custodians.set(initial_custs, get_self());
+
+}
+
 //======================== config actions ========================
 
 ACTION uci::init(string contract_name, string contract_version, name initial_admin) {
