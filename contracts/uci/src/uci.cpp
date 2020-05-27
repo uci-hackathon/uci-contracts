@@ -100,6 +100,9 @@ ACTION uci::nominate(name from, name to) {
     //add account to nominations list
     noms.nominations_list.push_back(to);
 
+    //set new nominations config
+    nominations.set(noms, get_self());
+
 }
 
 //======================== election actions ========================
